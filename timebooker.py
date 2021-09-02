@@ -1,7 +1,7 @@
 """Small utility to help me keep track of time spent per task.
 
 Upon launching, will calculate time spent using info written on last line.
-Afterwards, asks for user inputs: project number, and comments.
+Afterwards, asks for user inputs: project name, and comments.
 Finally, writes the whole existing data[1], replacing the last line
 Appends time of writing at the end of file, for future use.
 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 		start_time = float(lines[-1])
 		current_time = time.time()
 		# approx by ceiling to interval; flooring also possible
-		# -(-a//b) == math.ceil(a)
+		# -(-a//b) == math.ceil(a/b)
 		spent_time = -(-(current_time - start_time)/3600//TIME_APPROX)\
 			*TIME_APPROX
 		print('| NEW ENTRY |')
