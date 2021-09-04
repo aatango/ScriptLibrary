@@ -23,9 +23,7 @@ if __name__ == '__main__':
 			lines = file.readlines()
 		start_time = float(lines[-1])
 		current_time = time.time()
-		# approx by ceiling to interval; flooring also possible
-		# -(-a//b) == math.ceil(a/b)
-		spent_time = -(-(current_time - start_time)/3600//TIME_APPROX)\
+		spent_time = round((current_time - start_time)/3600/TIME_APPROX)\
 			*TIME_APPROX
 		print('| NEW ENTRY |')
 		project = input('Project name: ')
@@ -41,7 +39,8 @@ if __name__ == '__main__':
 		print(last_line)
 	except:
 		current_time = time.time()
-		with open(FILE_PATH + FILE_NAME, 'w') as file:
+		with open(FILE_PATH + FILE_NAME, 'a') as file:
+			file.write('---')
 			file.write(str(current_time))
 		print('New log started:')
 		print(time.ctime(current_time))
