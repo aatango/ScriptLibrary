@@ -1,6 +1,12 @@
 """Small utility to help me keep track of time spent per task/project.
 
 Also has method to present summary of existing projects in log.
+
+Referenced file is meant to be deleted, and restarted, at arbitrary times:
+originally meant for one work day.
+
+File is not meant to host any information not produced with this script.
+Corruption, or absence of, needed file will result in complete overwrite.
 """
 
 

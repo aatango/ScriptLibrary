@@ -7,5 +7,6 @@ Could be used to implement menus in CLI applications, et al.
 
 ### Timebooker
 Small utility to help me keep track of time.
-Task name; time spent on it; and any comments are written to file for later processing.
+Task name; time spent on it; and any comments are written to file for later processing. A log viewer quickly summarises the existing information for easier reading.
+
 This file is meant to be deleted, and restarted, at arbritrary times; usually a work day.
