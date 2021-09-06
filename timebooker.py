@@ -1,23 +1,27 @@
-"""Small utility to help me keep track of time spent per task.
+"""Small utility to help me keep track of time spent per task/project.
 
-Upon launching, will calculate time spent using info written on last line.
-Afterwards, asks for user inputs: project name, and comments.
-Finally, writes the whole existing data[1], replacing the last line
-Appends time of writing at the end of file, for future use.
-
-If no file exists, or is badly formatted, a new log is started.
-
-[1] File is not expected to be big enough to affect performance.
+Also has method to present summary of existing projects in log.
 """
 
-# to be formatted as function if ever needed
-if __name__ == '__main__':
-	import time
 
+def add_entry(project: str, comment: str) -> None:
+	"""Adds new entry to log.
+
+	Calculates difference between current time,
+	and timestamp present on last line of referenced file.
+
+	Rewrites entire file[1], with new entry appended at end.
+	Finally, new starting timestamp is added.
+
+	If no file exists, or is badly formatted, a new log is started.
+
+	[1] File is not expected to become big enough to affect performance.
+	"""
+
+	import time
 	
-	FILE_PATH = '../'
-	FILE_NAME = 'timekeeper'
 	TIME_APPROX = 0.25 #Hours
+
 	try:
 		with open(FILE_PATH + FILE_NAME, 'r') as file:
 			lines = file.readlines()
@@ -25,9 +29,6 @@ if __name__ == '__main__':
 		current_time = time.time()
 		spent_time = round((current_time - start_time)/3600/TIME_APPROX)\
 			*TIME_APPROX
-		print('| NEW ENTRY |')
-		project = input('Project name: ')
-		comment = input('Comments: ')
 		last_line = '\t'.join(
 			[time.ctime(start_time), f'{spent_time:.2f}', project, comment]
 		)
@@ -39,9 +40,54 @@ if __name__ == '__main__':
 		print(last_line)
 	except:
 		current_time = time.time()
-		with open(FILE_PATH + FILE_NAME, 'a') as file:
-			file.write('---')
+		with open(FILE_PATH + FILE_NAME, 'w') as file:
 			file.write(str(current_time))
 		print('New log started:')
 		print(time.ctime(current_time))
 		print(FILE_PATH + FILE_NAME)
+
+
+def view_log() -> None:
+	"""Sorts (by project) and presents current status of timebook.
+
+	Sums spent time, and lists comments related to each of the projects.
+	"""
+
+	with open(FILE_PATH + FILE_NAME, 'r') as file:
+		lines = file.readlines()[:-1]
+	projects = list(set([line.split('\t')[2] for line in lines]))
+	for project in projects:
+		spent_time = 0.0
+		comments = ''
+		for line in lines:
+			line = line.split(sep='\t')
+			if line[2] == project:
+				spent_time += float(line[1])
+				comments += line[3]
+		header = f'{project}\t{spent_time:.2f}'
+		print(header, '-' * len(header), comments, sep='\n')
+
+
+def main() -> None:
+	"""Execute timekeepr program.
+
+	Boolean check on project ID to both maintain window visible
+	(in case user wants to read log), and to close program
+	without new entry.
+	"""
+	
+	bool_log = input('Truthy to view Log: ') 
+	if bool_log:
+		view_log()
+	print('| NEW ENTRY |')
+	project = input('Project ID: ')
+	if project:
+		comment = input('Comments: ')
+		add_entry(project, comment)
+
+
+if __name__ == "__main__":
+	FILE_PATH = '../'
+	FILE_NAME = 'timekeeper'
+	main()
+	
