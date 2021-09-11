@@ -51,27 +51,32 @@ def add_entry(project: str, comment: str) -> None:
 		print('New log started:')
 		print(time.ctime(current_time))
 		print(FILE_PATH + FILE_NAME)
+		add_entry(project, comment)
 
 
 def view_log() -> None:
 	"""Sorts (by project) and presents current status of timebook.
 
 	Sums spent time, and lists comments related to each of the projects.
+	If log file does not comform to spec, exception will be indicated.
 	"""
 
-	with open(FILE_PATH + FILE_NAME, 'r') as file:
-		lines = file.readlines()[:-1]
-	projects = list(set([line.split('\t')[2] for line in lines]))
-	for project in projects:
-		spent_time = 0.0
-		comments = ''
-		for line in lines:
-			line = line.split(sep='\t')
-			if line[2] == project:
-				spent_time += float(line[1])
-				comments += line[3]
-		header = f'{project}\t{spent_time:.2f}'
-		print(header, '-' * len(header), comments, sep='\n')
+	try:
+		with open(FILE_PATH + FILE_NAME, 'r') as file:
+			lines = file.readlines()[:-1]
+		projects = list(set([line.split('\t')[2] for line in lines]))
+		for project in projects:
+			spent_time = 0.0
+			comments = ''
+			for line in lines:
+				line = line.split(sep='\t')
+				if line[2] == project:
+					spent_time += float(line[1])
+					comments += line[3]
+			header = f'{project}\t{spent_time:.2f}'
+			print(header, '-' * len(header), comments, sep='\n')
+	except:
+		print('Logfile does not exist.\nA new one will be created on file execution.')
 
 
 def main() -> None:
