@@ -26,8 +26,6 @@ def add_entry(project: str, comment: str) -> None:
 
 	import time
 	
-	TIME_APPROX = 0.25 #Hours
-
 	try:
 		with open(FILE_PATH + FILE_NAME, 'r') as file:
 			lines = file.readlines()
@@ -36,7 +34,7 @@ def add_entry(project: str, comment: str) -> None:
 		spent_time = round((current_time - start_time)/3600/TIME_APPROX)\
 			*TIME_APPROX
 		last_line = '\t'.join(
-			[time.ctime(start_time), f'{spent_time:.2f}', project, comment]
+			[project, f'{spent_time:.2f}', comment]
 		)
 
 		new_lines = lines[:-1] + [last_line] + ['\n'+ str(time.time())]
@@ -61,20 +59,30 @@ def view_log() -> None:
 	If log file does not comform to spec, exception will be indicated.
 	"""
 
+	projects = {}
+	
 	try:
+		# read log file
 		with open(FILE_PATH + FILE_NAME, 'r') as file:
 			lines = file.readlines()[:-1]
-		projects = list(set([line.split('\t')[2] for line in lines]))
+		lines = [line.split('\t') for line in lines]
+
+		# aggregate projects
+		for line in lines:
+			if line[0] in projects:
+				projects[line[0]] += [line[1:]]
+			else:
+				projects[line[0]] = [line[1:]]
+
+		# prep and print log
 		for project in projects:
-			spent_time = 0.0
-			comments = ''
-			for line in lines:
-				line = line.split(sep='\t')
-				if line[2] == project:
-					spent_time += float(line[1])
-					comments += line[3]
-			header = f'{project}\t{spent_time:.2f}'
-			print(header, '-' * len(header), comments, sep='\n')
+			project_time = 0.0
+			project_entries = ''
+			for entry in projects[project]:
+				project_time += float(entry[0])
+				project_entries += '\t'.join(entry)
+			header = f'{project_time:.2f}\t{project}'
+			print(header, '-' * len(header), project_entries, sep='\n')
 	except:
 		print('Logfile does not exist.\nA new one will be created on file execution.')
 
@@ -100,5 +108,6 @@ def main() -> None:
 if __name__ == "__main__":
 	FILE_PATH = '../'
 	FILE_NAME = 'timekeeper'
+	TIME_APPROX = 0.25 #Hours
 	main()
 	
