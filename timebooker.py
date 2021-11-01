@@ -9,8 +9,19 @@ File is not meant to host any information not produced with this script.
 Corruption, or absence of, needed file will result in complete overwrite.
 """
 
+import time
 
-def add_entry() -> None:
+
+def reset_log() -> None:
+	"""Clears existing data on file, keeping only current timestamp."""
+
+	with open(FILE_PATH + FILE_NAME, 'w') as file:
+		file.write(str(time.time()))
+
+	print(f'Log reset at {FILE_PATH + FILE_NAME}')
+
+	
+def add_entry(project: str = '', comment: str = '') -> None:
 	"""Adds new entry to log.
 
 	Calculates difference between current time,
@@ -24,13 +35,15 @@ def add_entry() -> None:
 	[1] File is not expected to become big enough to affect performance.
 	"""
 
-	import time
-	
+	print('- NEW ENTRY -')
+
 	try:
-		print('- NEW ENTRY -')
-		project = input('Project ID: ')
-		if project:
-			comment = input ('Comments: ')
+		project = project or input('Project ID: ')
+		if project: 
+			comment = comment or input ('Comments: ')
+		else:
+			print('Empty project; no new entry added.')
+			return
 		
 		with open(FILE_PATH + FILE_NAME, 'r') as file:
 			lines = file.readlines()
@@ -46,15 +59,11 @@ def add_entry() -> None:
 		with open(FILE_PATH + FILE_NAME, 'w') as file:
 			file.writelines(new_lines)
 		# if print below is done then entry is surely added
+		print(last_line)
 	except:
-		current_time = time.time()
-		with open(FILE_PATH + FILE_NAME, 'w') as file:
-			file.write(str(current_time))
-		print('New log started:')
-		print(time.ctime(current_time))
-		print(FILE_PATH + FILE_NAME)
+		print('Error adding new entry.', end=' ')
+		reset_log()
 		add_entry(project, comment)
-
 
 
 def view_log() -> None:
@@ -101,7 +110,8 @@ def view_log() -> None:
 		input('Press ENTER to continue ...')
 
 	except:
-		print('Logfile does not exist.\nA new one will be created on file execution.')
+		print('Error reading log.', end=' ')
+		if input('Reset? <False> '): reset_log()
 
 
 def bit_flag(functions: dict) -> None:
@@ -142,11 +152,12 @@ def main() -> None:
 
 	"""
 
-	print('timekeeper v1.0.0, (c)aatango\n')
+	print('timekeeper v1.1.0, (c)aatango\n')
 
 	functions = {
-	add_entry: 'New entry to existing log',
+	add_entry: 'Add new entry',
 	view_log: 'View existing log',
+	reset_log: 'Reset log with current timestamp'
 	}
 
 	bit_flag(functions)
