@@ -60,6 +60,7 @@ def view_log() -> None:
 	"""
 
 	projects = {}
+	time = 0.0
 	
 	try:
 		# read log file
@@ -75,14 +76,22 @@ def view_log() -> None:
 				projects[line[0]] = [line[1:]]
 
 		# prep and print log
+		print('\n')
 		for project in projects:
 			project_time = 0.0
 			project_entries = ''
 			for entry in projects[project]:
 				project_time += float(entry[0])
 				project_entries += '\t'.join(entry)
+			time += project_time
 			header = f'{project_time:.2f}\t{project}'
 			print(header, '-' * len(header), project_entries, sep='\n')
+
+		# total time on record
+		sum_header = f'{time:.2f}\tTOTAL TIME'
+		sum_styling = '-' * len(sum_header)
+		print(sum_styling,  sum_header, sum_styling, '\n',sep='\n')
+
 	except:
 		print('Logfile does not exist.\nA new one will be created on file execution.')
 
