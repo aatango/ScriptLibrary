@@ -10,7 +10,7 @@ Corruption, or absence of, needed file will result in complete overwrite.
 """
 
 
-def add_entry(project: str, comment: str) -> None:
+def add_entry() -> None:
 	"""Adds new entry to log.
 
 	Calculates difference between current time,
@@ -27,6 +27,11 @@ def add_entry(project: str, comment: str) -> None:
 	import time
 	
 	try:
+		print('- NEW ENTRY -')
+		project = input('Project ID: ')
+		if project:
+			comment = input ('Comments: ')
+		
 		with open(FILE_PATH + FILE_NAME, 'r') as file:
 			lines = file.readlines()
 		start_time = float(lines[-1])
@@ -41,7 +46,6 @@ def add_entry(project: str, comment: str) -> None:
 		with open(FILE_PATH + FILE_NAME, 'w') as file:
 			file.writelines(new_lines)
 		# if print below is done then entry is surely added
-		print(last_line)
 	except:
 		current_time = time.time()
 		with open(FILE_PATH + FILE_NAME, 'w') as file:
@@ -50,6 +54,7 @@ def add_entry(project: str, comment: str) -> None:
 		print(time.ctime(current_time))
 		print(FILE_PATH + FILE_NAME)
 		add_entry(project, comment)
+
 
 
 def view_log() -> None:
@@ -63,6 +68,7 @@ def view_log() -> None:
 	time = 0.0
 	
 	try:
+		print('- VIEW LOG - ')
 		# read log file
 		with open(FILE_PATH + FILE_NAME, 'r') as file:
 			lines = file.readlines()[:-1]
@@ -76,7 +82,6 @@ def view_log() -> None:
 				projects[line[0]] = [line[1:]]
 
 		# prep and print log
-		print('\n')
 		for project in projects:
 			project_time = 0.0
 			project_entries = ''
@@ -92,26 +97,59 @@ def view_log() -> None:
 		sum_styling = '-' * len(sum_header)
 		print(sum_styling,  sum_header, sum_styling, '\n',sep='\n')
 
+		# halt execution until user input
+		input('Press ENTER to continue ...')
+
 	except:
 		print('Logfile does not exist.\nA new one will be created on file execution.')
+
+
+def bit_flag(functions: dict) -> None:
+	"""Bit-coded flags to select program options.
+
+	
+	Input of 0 (zero) executes none of the argument functions.
+	Crashes with ValueError if query doesn't fit available functions.
+	
+	ARGS
+		functions - {function_name: description}
+	"""
+
+	f_keys = list(functions.keys())
+	f_values = list(functions.values())
+
+	print('AVAILABLE FUNCTIONS', '-' * 19, sep='\n')
+	print('0\tExit program')
+	print(f'1\t{f_values[0]}')
+	for i, desc in enumerate(f_values[1:]):
+		print(i + 1 << 1, desc, sep='\t')
+
+	user_input = input('\nInput flag <1>: ') or '1'
+	input_flag = sum([int(i) for i in user_input.split()])
+
+	b_length = input_flag.bit_length()
+	if len(functions) < b_length:
+		raise Value_Error('Input input_flag  does not fit within range')
+	else:
+		for i in range(b_length):
+			if 1 & (input_flag  >> i):
+				print('\n', end='')
+				f_keys[i]()
 
 
 def main() -> None:
 	"""Execute timekeepr program.
 
-	Boolean check on project ID to both maintain window visible
-	(in case user wants to read log), and to close program
-	without new entry.
 	"""
-	
-	bool_log = input('Truthy to view Log: ') 
-	if bool_log:
-		view_log()
-	print('| NEW ENTRY |')
-	project = input('Project ID: ')
-	if project:
-		comment = input('Comments: ')
-		add_entry(project, comment)
+
+	print('timekeeper v1.0.0, (c)aatango\n')
+
+	functions = {
+	add_entry: 'New entry to existing log',
+	view_log: 'View existing log',
+	}
+
+	bit_flag(functions)
 
 
 if __name__ == "__main__":
