@@ -12,33 +12,47 @@ def f4():
 	print('8. F4 is a decentralised open-wheel racing category intended for junior drivers')
 
 
-def bit_flag(query: int, *functions: str) -> None:
-	"""Bit-coded flags to filter several different options/functions.
+def bit_flag(functions: dict) -> None:
+	"""Bit-coded flags to select program options.
 
-	Input of 0 (zero) executes none of the associated functions.
-	Currently raises ValueError if not enough functions for the query.
-
-	ARGS
-		query	Requested flag
-			VALUE	DESC.
-				1	f1
-				2	f2
-				4	f3
-				8	f4
-			...		...
-	"""
 	
-	b_length = query.bit_length()
+	Input of 0 (zero) executes none of the argument functions.
+	Crashes with ValueError if query doesn't fit available functions.
+	
+	ARGS
+		functions - {function_name: description}
+	"""
+
+	f_keys = list(functions.keys())
+	f_values = list(functions.values())
+
+	print('AVAILABLE FUNCTIONS', '-' * 19, sep='\n')
+	print('0\tNothing')
+	print(f'1\t{f_values[0]}')
+	for i, desc in enumerate(f_values[1:]):
+		print(i + 1 << 1, desc, sep='\t')
+
+	user_input = input('\nInput flag: ') or '1'
+	input_flag = sum([int(i) for i in user_input.split()])
+
+	b_length = input_flag.bit_length()
 	if len(functions) < b_length:
-		raise ValueError('Input query does not fit within range')
+		raise Value_Error('Input input_flag  does not fit within range')
 	else:
 		for i in range(b_length):
-			if 1 & (query >> i):
-				functions[i]()
+			if 1 & (input_flag  >> i):
+				print('\n', end='')
+				f_keys[i]()
 
 
 if __name__ == '__main__':
 	# Testing
-	query = int(input('Input flag:\t'))
-	bit_flag(query, f1, f2, f3, f4)
+	function_list = {
+		f1: 'f1',
+		f2: 'f2',
+		f3: 'f3',
+		f4: 'f4',
+	}
+
+	bit_flag(function_list)
 	print(help(bit_flag))
