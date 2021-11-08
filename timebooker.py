@@ -122,6 +122,8 @@ def bit_flag(functions: dict) -> None:
 
 	
 	Input of 0 (zero) executes none of the argument functions.
+	Accepts space separated individual entries (ex: "1 3").
+	Input requests loops until user enters within valid range.
 	
 	ARGS
 		functions - {function_name: description}
@@ -135,10 +137,16 @@ def bit_flag(functions: dict) -> None:
 	for i, desc in enumerate(f_values):
 		print(1 << i, desc, sep='\t')
 
-	user_input = input('\nInput flag <1>: ') or '1'
-	input_flag = sum([int(i) for i in user_input.split()])
+	while True:
+		user_input = input('\nInput flag <1>: ') or '1'
+		input_flag = sum([int(i) for i in user_input.split()])
 
-	b_length = input_flag.bit_length()
+		b_length = input_flag.bit_length()
+		if len(functions) < b_length:
+			print(f'Input not within acceptable range [0-{(1 << len(functions)) - 1}]. Please try again ...')
+		else:
+			break
+
 	for i in range(b_length):
 		if 1 & (input_flag  >> i):
 			print('\n', end='')
@@ -150,7 +158,7 @@ def main() -> None:
 
 	"""
 
-	print('timekeeper v1.1.0, (c)aatango\n')
+	print('timekeeper v1.1.1, (c)aatango\n')
 
 	functions = {
 	add_entry: 'Add new entry',
