@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 """Small utility to help me keep track of time spent per task/project.
 
 Also has method to present summary of existing projects in log.
