@@ -122,7 +122,6 @@ def bit_flag(functions: dict) -> None:
 
 	
 	Input of 0 (zero) executes none of the argument functions.
-	Crashes with ValueError if query doesn't fit available functions.
 	
 	ARGS
 		functions - {function_name: description}
@@ -133,21 +132,17 @@ def bit_flag(functions: dict) -> None:
 
 	print('AVAILABLE FUNCTIONS', '-' * 19, sep='\n')
 	print('0\tExit program')
-	print(f'1\t{f_values[0]}')
-	for i, desc in enumerate(f_values[1:]):
-		print(i + 1 << 1, desc, sep='\t')
+	for i, desc in enumerate(f_values):
+		print(1 << i, desc, sep='\t')
 
 	user_input = input('\nInput flag <1>: ') or '1'
 	input_flag = sum([int(i) for i in user_input.split()])
 
 	b_length = input_flag.bit_length()
-	if len(functions) < b_length:
-		raise Value_Error('Input input_flag  does not fit within range')
-	else:
-		for i in range(b_length):
-			if 1 & (input_flag  >> i):
-				print('\n', end='')
-				f_keys[i]()
+	for i in range(b_length):
+		if 1 & (input_flag  >> i):
+			print('\n', end='')
+			f_keys[i]()
 
 
 def main() -> None:
